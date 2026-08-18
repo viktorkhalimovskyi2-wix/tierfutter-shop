@@ -1,5 +1,5 @@
 /*custom js code*/
-console.log(test_3)
+console.log('test_3')
 document.addEventListener("DOMContentLoaded", function() {
   const dropdowns = document.querySelectorAll('button[data-hook="dropdown-base"]');
   console.log(`Знайдено ${dropdowns.length} dropdown-ів`);
