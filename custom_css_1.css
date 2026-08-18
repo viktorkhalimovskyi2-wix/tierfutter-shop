@@ -1,9 +1,17 @@
 /*custom css*/
-#SITE_CONTAINER #main_MF#main_MF .css-editing-scope #PAGES_CONTAINER .wixui-section {
+/*#SITE_CONTAINER #main_MF#main_MF .css-editing-scope #PAGES_CONTAINER .wixui-section {
   & [data-hook="options-dropdown-container"] {
     display: block !important;
   }
 }
+h1 {
+  display: none;
+}
+*/
+#SITE_CONTAINER #main_MF#main_MF .css-editing-scope #PAGES_CONTAINER .wixui-section [data-hook="options-dropdown-container"] {
+  display: block !important;
+}
+
 h1 {
   display: none;
 }
