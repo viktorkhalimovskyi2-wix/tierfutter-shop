@@ -4,3 +4,6 @@
     display: block !important;
   }
 }
+h1 {
+  display: none;
+}
