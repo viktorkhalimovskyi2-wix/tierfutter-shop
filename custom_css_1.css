@@ -1,5 +1,5 @@
 /*custom css*/
 #SITE_CONTAINER #main_MF#main_MF .css-editing-scope .wixui-section {
     [data-hook="options-dropdown-container"] {
-    display: none !important;
+    display: block !important;
 }
