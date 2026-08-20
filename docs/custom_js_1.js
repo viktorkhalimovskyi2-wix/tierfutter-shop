@@ -1,8 +1,7 @@
 /*custom js code*/
-console.log('test_16_6')
+console.log('test_16_7')
 document.addEventListener("DOMContentLoaded", function() {
 function selectAllOptions() {
-  // знаходимо всі div з id, що починається на "view-more-options-"
   const allDivs = document.getElementsByTagName("div");
   const optionContainers = [];
 
@@ -16,31 +15,49 @@ function selectAllOptions() {
   console.log(`Знайдено ${optionContainers.length} контейнерів`);
 
   optionContainers.forEach((container, index) => {
-    const input = container.querySelector("input");
-    if (!input) {
-      console.warn(`❌ У контейнері #${index} (${container.id}) не знайдено input`);
+    // пробуємо спершу input
+    let target = container.querySelector("input");
+    if (!target) {
+      // якщо input нема — беремо label
+      target = container.querySelector("label");
+    }
+
+    if (!target) {
+      console.warn(`❌ У контейнері #${index} (${container.id}) не знайдено ні input, ні label`);
       return;
     }
 
-    // знаходимо ключ __reactProps
-    const reactPropsKey = Object.keys(input).find(k => k.startsWith("__reactProps"));
-    const reactProps = input[reactPropsKey];
+    const reactPropsKey = Object.keys(target).find(k => k.startsWith("__reactProps"));
+    const reactProps = target[reactPropsKey];
 
-    if (reactProps && reactProps.onChange) {
-      console.log(`➡️ Викликаю onChange для input у контейнері #${index}: id=${container.id}`);
-      reactProps.onChange({
-        target: input,
-        currentTarget: input,
-        bubbles: true,
-        isTrusted: true
-      });
+    if (reactProps) {
+      if (reactProps.onChange) {
+        console.log(`➡️ Викликаю onChange для контейнера #${index}: id=${container.id}`);
+        reactProps.onChange({
+          target,
+          currentTarget: target,
+          bubbles: true,
+          isTrusted: true
+        });
+      } else if (reactProps.onClick) {
+        console.log(`➡️ Викликаю onClick для контейнера #${index}: id=${container.id}`);
+        reactProps.onClick({
+          target,
+          currentTarget: target,
+          bubbles: true,
+          isTrusted: true
+        });
+      } else {
+        console.error(`❌ У React-пропсах контейнера #${index} немає onChange/onClick`);
+      }
     } else {
-      console.error(`❌ Не знайдено onChange у React-пропсах для контейнера #${index}`);
+      console.error(`❌ Не знайдено __reactProps у контейнера #${index}`);
     }
   });
 }
 
 // Викликати функцію коли потрібно вибрати всі параметри
 selectAllOptions();
+
 
 });
