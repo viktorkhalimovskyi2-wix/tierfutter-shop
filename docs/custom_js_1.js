@@ -1,22 +1,18 @@
 /*custom js code*/
-console.log('test_16_2')
+console.log('test_16_3')
 document.addEventListener("DOMContentLoaded", function() {
   // отримуємо контейнер по id
-  const container = document.getElementById("view-more-options-0");
+  let container = document.getElementById("view-more-options-0");
 
   if (container) {
     // знаходимо перший label всередині контейнера
-    const label = container.getElementsByTagName("label")[0];
+    let label = container.getElementsByTagName("label")[0];
 
     if (label) {
       console.log("➡️ Клікаю по label:", label);
 
-      // симулюємо справжній клік
-      label.dispatchEvent(new MouseEvent("pointerdown", { bubbles: true }));
-      label.dispatchEvent(new MouseEvent("pointerup", { bubbles: true }));
-      label.dispatchEvent(new MouseEvent("mousedown", { bubbles: true }));
-      label.dispatchEvent(new MouseEvent("mouseup", { bubbles: true }));
-      label.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+      // симулюємо клік
+      label.click();
 
       console.log("✔️ Клік по label виконано");
     } else {
