@@ -1,5 +1,5 @@
 /*custom js code*/
-console.log('test_16_7')
+console.log('test_16_8')
 document.addEventListener("DOMContentLoaded", function() {
 function selectAllOptions() {
   const allDivs = document.getElementsByTagName("div");
@@ -15,40 +15,28 @@ function selectAllOptions() {
   console.log(`Знайдено ${optionContainers.length} контейнерів`);
 
   optionContainers.forEach((container, index) => {
-    // пробуємо спершу input
-    let target = container.querySelector("input");
-    if (!target) {
-      // якщо input нема — беремо label
-      target = container.querySelector("label");
-    }
-
-    if (!target) {
-      console.warn(`❌ У контейнері #${index} (${container.id}) не знайдено ні input, ні label`);
+    const input = container.querySelector("input");
+    if (!input) {
+      console.warn(`❌ У контейнері #${index} (${container.id}) не знайдено input`);
       return;
     }
 
-    const reactPropsKey = Object.keys(target).find(k => k.startsWith("__reactProps"));
-    const reactProps = target[reactPropsKey];
+    const reactPropsKey = Object.keys(input).find(k => k.startsWith("__reactProps"));
+    const reactProps = input[reactPropsKey];
 
     if (reactProps) {
+      // перевіряємо всі можливі хендлери
       if (reactProps.onChange) {
-        console.log(`➡️ Викликаю onChange для контейнера #${index}: id=${container.id}`);
-        reactProps.onChange({
-          target,
-          currentTarget: target,
-          bubbles: true,
-          isTrusted: true
-        });
+        console.log(`➡️ Викликаю onChange для контейнера #${index}`);
+        reactProps.onChange({ target: input, currentTarget: input, bubbles: true, isTrusted: true });
       } else if (reactProps.onClick) {
-        console.log(`➡️ Викликаю onClick для контейнера #${index}: id=${container.id}`);
-        reactProps.onClick({
-          target,
-          currentTarget: target,
-          bubbles: true,
-          isTrusted: true
-        });
+        console.log(`➡️ Викликаю onClick для контейнера #${index}`);
+        reactProps.onClick({ target: input, currentTarget: input, bubbles: true, isTrusted: true });
+      } else if (reactProps.onInput) {
+        console.log(`➡️ Викликаю onInput для контейнера #${index}`);
+        reactProps.onInput({ target: input, currentTarget: input, bubbles: true, isTrusted: true });
       } else {
-        console.error(`❌ У React-пропсах контейнера #${index} немає onChange/onClick`);
+        console.error(`❌ У React-пропсах контейнера #${index} немає onChange/onClick/onInput`);
       }
     } else {
       console.error(`❌ Не знайдено __reactProps у контейнера #${index}`);
