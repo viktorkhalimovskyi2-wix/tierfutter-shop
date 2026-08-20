@@ -1,62 +1,46 @@
 /*custom js code*/
-console.log('test_16_5')
+console.log('test_16_6')
 document.addEventListener("DOMContentLoaded", function() {
-  const addToCartBtn = document.querySelector('button[data-hook="add-to-cart"]');
-  let alreadyTriggered = false; // прапорець, щоб уникнути циклу
+function selectAllOptions() {
+  // знаходимо всі div з id, що починається на "view-more-options-"
+  const allDivs = document.getElementsByTagName("div");
+  const optionContainers = [];
 
-  if (addToCartBtn) {
-    console.log("✔️ Кнопка 'Додати в кошик' знайдена");
-
-    addToCartBtn.addEventListener("click", (event) => {
-      if (alreadyTriggered) return; // другий раз не запускаємо
-      alreadyTriggered = true;
-
-      console.log("➡️ Перехоплено клік по 'Додати в кошик'");
-      event.preventDefault();
-      event.stopPropagation();
-
-      // функція для вибору опцій
-      function selectOptionsAndClickCart() {
-        // знаходимо всі div з id, що починається на "view-more-options-"
-        const allDivs = document.getElementsByTagName("div");
-        const optionContainers = [];
-
-        for (let i = 0; i < allDivs.length; i++) {
-          const el = allDivs[i];
-          if (el.id && el.id.startsWith("view-more-options-")) {
-            optionContainers.push(el);
-          }
-        }
-
-        console.log(`Знайдено ${optionContainers.length} контейнерів`);
-
-        optionContainers.forEach((container, index) => {
-          const label = container.getElementsByTagName("label")[0];
-          if (label) {
-            console.log(`➡️ Клікаю по label у контейнері #${index}: id=${container.id}`);
-            label.dispatchEvent(new MouseEvent("click", { bubbles: true }));
-          }
-        });
-
-        // повторний клік по кнопці кошика після вибору параметрів
-        setTimeout(() => {
-          console.log("➡️ Повторний клік по кнопці 'Додати в кошик'");
-          addToCartBtn.dispatchEvent(new MouseEvent("click", { bubbles: true }));
-        }, 300);
-      }
-
-      // MutationObserver: чекаємо поки Wix відрендерить опції
-      const observer = new MutationObserver(() => {
-        const container = document.getElementById("view-more-options-0");
-        if (container && container.getElementsByTagName("label")[0]) {
-          observer.disconnect();
-          selectOptionsAndClickCart();
-        }
-      });
-
-      observer.observe(document.body, { childList: true, subtree: true });
-    }, true);
-  } else {
-    console.error("❌ Кнопка 'Додати в кошик' не знайдена");
+  for (let i = 0; i < allDivs.length; i++) {
+    const el = allDivs[i];
+    if (el.id && el.id.startsWith("view-more-options-")) {
+      optionContainers.push(el);
+    }
   }
+
+  console.log(`Знайдено ${optionContainers.length} контейнерів`);
+
+  optionContainers.forEach((container, index) => {
+    const input = container.querySelector("input");
+    if (!input) {
+      console.warn(`❌ У контейнері #${index} (${container.id}) не знайдено input`);
+      return;
+    }
+
+    // знаходимо ключ __reactProps
+    const reactPropsKey = Object.keys(input).find(k => k.startsWith("__reactProps"));
+    const reactProps = input[reactPropsKey];
+
+    if (reactProps && reactProps.onChange) {
+      console.log(`➡️ Викликаю onChange для input у контейнері #${index}: id=${container.id}`);
+      reactProps.onChange({
+        target: input,
+        currentTarget: input,
+        bubbles: true,
+        isTrusted: true
+      });
+    } else {
+      console.error(`❌ Не знайдено onChange у React-пропсах для контейнера #${index}`);
+    }
+  });
+}
+
+// Викликати функцію коли потрібно вибрати всі параметри
+selectAllOptions();
+
 });
