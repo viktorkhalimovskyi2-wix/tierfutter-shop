@@ -1,42 +1,50 @@
 /*custom js code*/
-console.log('test_16_4')
+console.log('test_16_5')
 document.addEventListener("DOMContentLoaded", function() {
-  // знаходимо кнопку "Додати в кошик"
   const addToCartBtn = document.querySelector('button[data-hook="add-to-cart"]');
+  let alreadyTriggered = false; // прапорець, щоб уникнути циклу
 
   if (addToCartBtn) {
     console.log("✔️ Кнопка 'Додати в кошик' знайдена");
 
-    // слухаємо клік користувача
     addToCartBtn.addEventListener("click", (event) => {
-      console.log("➡️ Користувач натиснув 'Додати в кошик'");
+      // якщо вже запускали — виходимо
+      if (alreadyTriggered) return;
+      alreadyTriggered = true;
 
-      // 1. Зупиняємо стандартну дію кнопки (щоб не вилізло повідомлення про помилку)
+      console.log("➡️ Перехоплено клік по 'Додати в кошик'");
       event.preventDefault();
       event.stopPropagation();
 
-      // 2. Вибираємо параметри (наприклад, view-more-options-0)
-      const container = document.getElementById("view-more-options-0");
-      if (container) {
-        const label = container.getElementsByTagName("label")[0];
-        if (label) {
-          console.log("➡️ Клікаю по label:", label);
+      // знаходимо всі div з id, що починається на "view-more-options-"
+      const allDivs = document.getElementsByTagName("div");
+      const optionContainers = [];
 
-          // симулюємо кліки по label
-          label.dispatchEvent(new MouseEvent("click", { bubbles: true }));
-
-          console.log("✔️ Опція у view-more-options-0 вибрана");
+      for (let i = 0; i < allDivs.length; i++) {
+        const el = allDivs[i];
+        if (el.id && el.id.startsWith("view-more-options-")) {
+          optionContainers.push(el);
         }
       }
 
-      // 3. Після вибору параметрів повторно клікаємо по кнопці кошика
+      console.log(`Знайдено ${optionContainers.length} контейнерів`);
+
+      // клікаємо по першому label у кожному контейнері
+      optionContainers.forEach((container, index) => {
+        const label = container.getElementsByTagName("label")[0];
+        if (label) {
+          console.log(`➡️ Клікаю по label у контейнері #${index}: id=${container.id}`);
+          label.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+        }
+      });
+
+      // повторний клік по кнопці кошика після вибору параметрів
       setTimeout(() => {
         console.log("➡️ Повторний клік по кнопці 'Додати в кошик'");
         addToCartBtn.dispatchEvent(new MouseEvent("click", { bubbles: true }));
-      }, 300); // невелика затримка, щоб Wix встиг оновити state
-    }, true); // true = перехоплюємо подію на фазі захоплення
+      }, 300);
+    }, true);
   } else {
     console.error("❌ Кнопка 'Додати в кошик' не знайдена");
   }
 });
-
